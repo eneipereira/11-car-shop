@@ -3,20 +3,20 @@ import InvalidMongoIdError from '../errors/InvalidMongoIdError';
 import { IModel } from '../interfaces/IModel';
 
 export default abstract class Model<T> implements IModel<T> {
-  protected _model: MongoModel<T>;
+  protected DAO: MongoModel<T>;
 
   constructor(model: MongoModel<T>) {
-    this._model = model;
+    this.DAO = model;
   }
 
   public async create(payload: T): Promise<T> {
-    const created = await this._model.create({ ...payload });
+    const created = await this.DAO.create({ ...payload });
 
     return created;
   }
 
   public async read(): Promise<T[]> {
-    const itens = await this._model.find();
+    const itens = await this.DAO.find();
 
     return itens;
   }
@@ -24,7 +24,7 @@ export default abstract class Model<T> implements IModel<T> {
   public async readOne(_id: string): Promise<T | null> {
     if (!isValidObjectId(_id)) throw new InvalidMongoIdError();
     
-    const item = await this._model.findById(_id);
+    const item = await this.DAO.findById(_id);
 
     return item;
   }
@@ -32,7 +32,7 @@ export default abstract class Model<T> implements IModel<T> {
   public async update(_id: string, payload: T): Promise<T | null> {
     if (!isValidObjectId(_id)) throw new InvalidMongoIdError();
 
-    const updated = await this._model.findByIdAndUpdate(
+    const updated = await this.DAO.findByIdAndUpdate(
       _id,
       { ...payload } as UpdateQuery<T>,
       { new: true },
@@ -44,7 +44,7 @@ export default abstract class Model<T> implements IModel<T> {
   public async delete(_id: string): Promise<T | null> {
     if (!isValidObjectId(_id)) throw new InvalidMongoIdError();
 
-    const deleted = await this._model.findByIdAndDelete(_id);
+    const deleted = await this.DAO.findByIdAndDelete(_id);
 
     return deleted;
   }
