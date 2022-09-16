@@ -2,7 +2,7 @@ import * as sinon from 'sinon';
 import chai, { use } from 'chai';
 import CarModel from '../../../models/Car.model';
 import CarService from '../../../services/Car.service';
-import { carMock, carMockWithId } from '../../mocks/carMock';
+import { allCarsMock, carMock, carMockWithId } from '../../mocks/carMock';
 import chaiAsPromised from 'chai-as-promised';
 import { SafeParseError, SafeParseReturnType, ZodError } from 'zod';
 import { Car, ICar } from '../../../interfaces/ICar';
@@ -28,6 +28,23 @@ describe('src/services/car.service', () => {
       sinon.stub(Car, 'safeParse').returns({ success: false, error: new ZodError([]) } as SafeParseError<ICar>)
 
       return expect(carService.create({})).to.be.eventually.rejectedWith(ZodError)
+    })
+  })
+
+  describe('read', () => {
+    it('should return an array with all itens', async () => {
+      sinon.stub(carModel, 'read').resolves(allCarsMock)
+      const car = await carService.read()
+      
+      expect(car[0]).to.deep.eq(allCarsMock[0])
+    });
+    
+    it('should return an empty array if there aren\'t itens', async () => {
+      sinon.stub(carModel, 'read').resolves([])
+
+      const car = await carService.read()
+
+      expect(car).to.deep.eq([])
     })
   })
 });
