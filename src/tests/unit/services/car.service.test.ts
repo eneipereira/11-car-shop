@@ -6,6 +6,7 @@ import { allCarsMock, carMock, carMockWithId } from '../../mocks/carMock';
 import chaiAsPromised from 'chai-as-promised';
 import { SafeParseError, SafeParseReturnType, ZodError } from 'zod';
 import { Car, ICar } from '../../../interfaces/ICar';
+import NotFoundError from '../../../errors/NotFoundError';
 const { expect } = chai;
 
 use(chaiAsPromised)
@@ -45,6 +46,23 @@ describe('src/services/car.service', () => {
       const car = await carService.read()
 
       expect(car).to.deep.eq([])
+    })
+  })
+
+  describe('readOne', () => {
+    it('should return an object with the right car as result', async () => {
+      sinon.stub(carModel, 'readOne').resolves(carMockWithId)
+
+      const car = await carService.readOne(carMockWithId._id)
+      
+      expect(car).to.deep.eq(carMockWithId)
+    });
+    
+    it('should return a NotFoundError if no car is found with the passed id', async () => {
+      sinon.stub(carModel, 'readOne').resolves(null)
+
+      return expect(carService.readOne('ObjectIdErrado'))
+        .to.be.eventually.rejectedWith(NotFoundError)
     })
   })
 });
