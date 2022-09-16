@@ -17,6 +17,7 @@ describe('src/controllers/car.controller', () => {
   const res = {} as Response;
 
   before(() => {
+    res.sendStatus = sinon.stub().returns(res);
     res.status = sinon.stub().returns(res);
     res.json = sinon.stub().returns(res);
   })
@@ -79,6 +80,18 @@ describe('src/controllers/car.controller', () => {
 
       expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true
       expect((res.json as sinon.SinonStub).calledWith(toUpdateCarMockWithId)).to.be.true
+    })
+  })
+
+  describe('delete', () => {
+    it('should be called with status http 204', async () => {
+      sinon.stub(carService, 'delete').resolves()
+
+      req.params = { id: carMockWithId._id };
+
+      await carController.delete(req, res)
+
+      expect((res.sendStatus as sinon.SinonStub).calledWith(204)).to.be.true
     })
   })
 });
