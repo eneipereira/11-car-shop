@@ -55,4 +55,17 @@ describe('src/controllers/car.controller', () => {
       expect((res.json as sinon.SinonStub).calledWith([])).to.be.true
     })
   })
+
+  describe('readOne', () => {
+    it('should return an object with the right car as result', async () => {
+      sinon.stub(carService, 'readOne').resolves(carMockWithId)
+
+      req.params = { id: carMockWithId._id };
+
+      await carController.readOne(req, res)
+
+      expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true
+      expect((res.json as sinon.SinonStub).calledWith(carMockWithId)).to.be.true
+    })
+  })
 });
