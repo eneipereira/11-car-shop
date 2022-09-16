@@ -1,5 +1,5 @@
 export default class InvalidMongoIdError extends Error {
-  constructor(message = 'Id must be a 24 characters hexadecimal') {
+  constructor(message = 'Id must have 24 hexadecimal characters') {
     super(message);
     
     this.name = 'InvalidMongoIdError';

@@ -3,7 +3,7 @@ import { ZodError } from 'zod';
 
 const errors: Record<string, number> = {
   InvalidMongoIdError: 400,
-  
+  NotFoundError: 404,
 };
 
 const errorHandler: ErrorRequestHandler = (err: Error | ZodError, _req, res, _next) => {
@@ -22,7 +22,7 @@ const errorHandler: ErrorRequestHandler = (err: Error | ZodError, _req, res, _ne
     return;
   }
 
-  res.status(status).json({ message });
+  res.status(status).json({ error: message });
 };
 
 export default errorHandler;
