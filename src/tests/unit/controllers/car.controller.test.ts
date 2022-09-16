@@ -4,7 +4,7 @@ import CarModel from '../../../models/Car.model';
 import CarService from '../../../services/Car.service';
 import CarController from '../../../controllers/Car.controller';
 import { Request, Response } from 'express';
-import { allCarsMock, carMock, carMockWithId } from '../../mocks/carMock';
+import { allCarsMock, carMock, carMockWithId, toUpdateCarMockWithId } from '../../mocks/carMock';
 const { expect } = chai;
 
 describe('src/controllers/car.controller', () => {
@@ -66,6 +66,19 @@ describe('src/controllers/car.controller', () => {
 
       expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true
       expect((res.json as sinon.SinonStub).calledWith(carMockWithId)).to.be.true
+    })
+  })
+
+  describe('update', () => {
+    it('should return an object with the updated car as result', async () => {
+      sinon.stub(carService, 'update').resolves(toUpdateCarMockWithId)
+
+      req.params = { id: toUpdateCarMockWithId._id };
+
+      await carController.update(req, res)
+
+      expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true
+      expect((res.json as sinon.SinonStub).calledWith(toUpdateCarMockWithId)).to.be.true
     })
   })
 });
