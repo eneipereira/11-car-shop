@@ -2,9 +2,9 @@ import * as sinon from 'sinon';
 import chai, { use } from 'chai';
 import CarModel from '../../../models/Car.model';
 import CarService from '../../../services/Car.service';
-import { allCarsMock, carMock, carMockWithId } from '../../mocks/carMock';
+import { allCarsMock, carMock, carMockWithId, toUpdateCarMock, toUpdateCarMockWithId } from '../../mocks/carMock';
 import chaiAsPromised from 'chai-as-promised';
-import { SafeParseError, SafeParseReturnType, ZodError } from 'zod';
+import { SafeParseError, SafeParseReturnType, SafeParseSuccess, ZodError } from 'zod';
 import { Car, ICar } from '../../../interfaces/ICar';
 import NotFoundError from '../../../errors/NotFoundError';
 const { expect } = chai;
@@ -62,6 +62,31 @@ describe('src/services/car.service', () => {
       sinon.stub(carModel, 'readOne').resolves(null)
 
       return expect(carService.readOne('ObjectIdErrado'))
+        .to.be.eventually.rejectedWith(NotFoundError)
+    })
+  })
+
+  describe('update', () => {
+    it('should return an object with the updated car as result', async () => {
+      sinon.stub(Car, 'safeParse').returns({ success: true, data: toUpdateCarMock } as SafeParseSuccess<ICar>)
+      sinon.stub(carModel, 'update').resolves(toUpdateCarMockWithId)
+
+      const updatedCar = await carService.update(toUpdateCarMockWithId._id, toUpdateCarMock)
+
+      expect(updatedCar).to.be.deep.eq(toUpdateCarMockWithId)
+    });
+
+    it('should rejects with ZodError if an invalid argument is passed', async () => {
+      sinon.stub(Car, 'safeParse').returns({ success: false, error: new ZodError([]) } as SafeParseError<ICar>)
+
+      return expect(carService.update(toUpdateCarMockWithId._id, {}))
+        .to.be.eventually.rejectedWith(ZodError)
+    })
+
+    it('should return a NotFoundError if no car is found with the passed id', async () => {
+      sinon.stub(carModel, 'update').resolves(null)
+
+      return expect(carService.update('ObjectIdErrado', toUpdateCarMock))
         .to.be.eventually.rejectedWith(NotFoundError)
     })
   })
