@@ -65,29 +65,44 @@ describe('src/services/car.service', () => {
         .to.be.eventually.rejectedWith(NotFoundError)
     })
   })
-
+  
   describe('update', () => {
     it('should return an object with the updated car as result', async () => {
       sinon.stub(Car, 'safeParse').returns({ success: true, data: toUpdateCarMock } as SafeParseSuccess<ICar>)
       sinon.stub(carModel, 'update').resolves(toUpdateCarMockWithId)
-
+      
       const updatedCar = await carService.update(toUpdateCarMockWithId._id, toUpdateCarMock)
-
+      
       expect(updatedCar).to.be.deep.eq(toUpdateCarMockWithId)
     });
-
+    
     it('should rejects with ZodError if an invalid argument is passed', async () => {
       sinon.stub(Car, 'safeParse').returns({ success: false, error: new ZodError([]) } as SafeParseError<ICar>)
-
+      
       return expect(carService.update(toUpdateCarMockWithId._id, {}))
-        .to.be.eventually.rejectedWith(ZodError)
+      .to.be.eventually.rejectedWith(ZodError)
     })
-
+    
     it('should return a NotFoundError if no car is found with the passed id', async () => {
       sinon.stub(carModel, 'update').resolves(null)
 
       return expect(carService.update('ObjectIdErrado', toUpdateCarMock))
-        .to.be.eventually.rejectedWith(NotFoundError)
+      .to.be.eventually.rejectedWith(NotFoundError)
     })
   })
+  
+    describe('delete', () => {
+      it('should return undefined if the car was deleted', async () => {
+        sinon.stub(carModel, 'delete').resolves(carMockWithId) 
+        
+        return expect(carService.delete(carMockWithId._id)).to.eventually.be.undefined
+      });
+      
+      it('should return a NotFoundError if no car is found with the passed id', async () => {
+        sinon.stub(carModel, 'delete').resolves(null)
+  
+        return expect(carService.delete('ObjectIdErrado'))
+          .to.be.eventually.rejectedWith(NotFoundError)
+      })
+    })
 });
