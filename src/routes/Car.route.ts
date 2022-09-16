@@ -10,6 +10,7 @@ carRoute.route('/')
 
 carRoute.route('/:id')
   .get(async (req, res) => carController.readOne(req, res))
-  .put(async (req, res) => carController.update(req, res));
+  .put(async (req, res) => carController.update(req, res))
+  .delete(async (req, res) => carController.delete(req, res));
 
 export default carRoute; 
