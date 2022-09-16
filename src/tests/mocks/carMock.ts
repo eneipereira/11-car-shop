@@ -15,3 +15,17 @@ export const carMockWithId = {
 export const allCarsMock = [
   { ...carMockWithId }
 ]
+
+export const toUpdateCarMock = {
+  model: "Fiat Uno",
+  year: 1963,
+  color: "blue",
+  buyValue: 3500,
+  seatsQty: 4,
+  doorsQty: 4
+}
+
+export const toUpdateCarMockWithId = {
+  ...toUpdateCarMock,
+  _id: carMockWithId._id
+}

@@ -2,7 +2,7 @@ import * as sinon from 'sinon';
 import chai, { use } from 'chai';
 import Mongoose from 'mongoose';
 import { Model as CarDAO } from 'mongoose';
-import { allCarsMock, carMock, carMockWithId } from '../../mocks/carMock';
+import { allCarsMock, carMock, carMockWithId, toUpdateCarMock, toUpdateCarMockWithId } from '../../mocks/carMock';
 import CarModel from '../../../models/Car.model';
 import chaiAsPromised from 'chai-as-promised';
 import InvalidMongoIdError from '../../../errors/InvalidMongoIdError';
@@ -57,6 +57,24 @@ describe('src/models/car.model', () => {
       sinon.stub(Mongoose, 'isValidObjectId').returns(false)
       
       return expect(carModel.readOne('ObjectIdInvalido'))
+        .to.be.eventually.rejectedWith(InvalidMongoIdError)
+    })
+  })
+
+  describe('update', () => {
+    it('should return an object with the updated car as result', async () => {
+      sinon.stub(Mongoose, 'isValidObjectId').returns(true)
+      sinon.stub(CarDAO, 'findByIdAndUpdate').resolves(toUpdateCarMockWithId)
+    
+      const updatedCar = await carModel.update(toUpdateCarMockWithId._id, toUpdateCarMock)
+    
+      expect(updatedCar).to.deep.eq(toUpdateCarMockWithId)
+    })
+    
+    it('should throw an InvalidMongoIderror if an invalid id is passed', async () => {
+      sinon.stub(Mongoose, 'isValidObjectId').returns(false)
+      
+      return expect(carModel.update('ObjectIdInvalido', toUpdateCarMock))
         .to.be.eventually.rejectedWith(InvalidMongoIdError)
     })
   })
