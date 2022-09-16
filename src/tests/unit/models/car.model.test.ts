@@ -78,4 +78,22 @@ describe('src/models/car.model', () => {
         .to.be.eventually.rejectedWith(InvalidMongoIdError)
     })
   })
+
+  describe('delete', () => {
+    it('should return an object with the deleted car as result', async () => {
+      sinon.stub(Mongoose, 'isValidObjectId').returns(true)
+      sinon.stub(CarDAO, 'findByIdAndDelete').resolves(carMockWithId)
+    
+      const deletedCar = await carModel.delete(carMockWithId._id)
+    
+      expect(deletedCar).to.deep.eq(carMockWithId)
+    })
+    
+    it('should throw an InvalidMongoIderror if an invalid id is passed', async () => {
+      sinon.stub(Mongoose, 'isValidObjectId').returns(false)
+      
+      return expect(carModel.delete('ObjectIdInvalido'))
+        .to.be.eventually.rejectedWith(InvalidMongoIdError)
+    })
+  })
 });
