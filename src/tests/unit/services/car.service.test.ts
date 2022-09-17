@@ -4,7 +4,7 @@ import CarModel from '../../../models/Car.model';
 import CarService from '../../../services/Car.service';
 import { allCarsMock, carMock, carMockWithId, toUpdateCarMock, toUpdateCarMockWithId } from '../../mocks/carMock';
 import chaiAsPromised from 'chai-as-promised';
-import { SafeParseError, SafeParseReturnType, SafeParseSuccess, ZodError } from 'zod';
+import { SafeParseError, SafeParseSuccess, ZodError } from 'zod';
 import { Car, ICar } from '../../../interfaces/ICar';
 import NotFoundError from '../../../errors/NotFoundError';
 const { expect } = chai;
