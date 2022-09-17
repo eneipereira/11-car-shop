@@ -14,4 +14,10 @@ export default class MotorcycleService {
 
     return newMotorcycle;
   }
+
+  public async read(): Promise<IMotorcycle[]> {
+    const motorcycle = await this._model.read();
+
+    return motorcycle;
+  }
 }
