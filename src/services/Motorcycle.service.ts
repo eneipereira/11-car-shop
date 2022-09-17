@@ -1,9 +1,9 @@
 import NotFoundError from '../errors/NotFoundError';
 import { IModel } from '../interfaces/IModel';
 import { IMotorcycle, Motorcycle } from '../interfaces/IMotorcycle';
-// import { IService } from '../interfaces/IService';
+import { IService } from '../interfaces/IService';
 
-export default class MotorcycleService {
+export default class MotorcycleService implements IService<IMotorcycle> {
   constructor(protected _model: IModel<IMotorcycle>) { }
 
   public async create(payload: unknown): Promise<IMotorcycle> {
@@ -40,5 +40,11 @@ export default class MotorcycleService {
     if (!updatedMotorcycle) throw new NotFoundError();
 
     return updatedMotorcycle;
+  }
+
+  public async delete(_id: string): Promise<void> {
+    const deletedMotorcycle = await this._model.delete(_id);
+
+    if (!deletedMotorcycle) throw new NotFoundError();
   }
 }
