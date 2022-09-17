@@ -8,4 +8,7 @@ motorcycleRoute.route('/')
   .post(async (req, res) => motorcycleController.create(req, res))
   .get(async (req, res) => motorcycleController.read(req, res));
 
+motorcycleRoute.route('/:id')
+  .get(async (req, res) => motorcycleController.readOne(req, res));
+
 export default motorcycleRoute;

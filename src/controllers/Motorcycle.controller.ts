@@ -3,7 +3,7 @@ import { IMotorcycle } from '../interfaces/IMotorcycle';
 import { IService } from '../interfaces/IService';
 
 export default class MotorcycleController {
-  constructor(protected _service: Pick<IService<IMotorcycle>, 'create' | 'read'>) { }
+  constructor(protected _service: Omit<IService<IMotorcycle>, 'update' | 'delete'>) { }
 
   public async create(req: Request, res: Response<IMotorcycle>) {
     const newMotorcycle = await this._service.create(req.body);
@@ -15,5 +15,11 @@ export default class MotorcycleController {
     const motorcycles = await this._service.read();
     
     res.status(200).json(motorcycles);
+  }
+
+  public async readOne(req: Request, res: Response<IMotorcycle>) {
+    const motorcycle = await this._service.readOne(req.params.id);
+    
+    res.status(200).json(motorcycle);
   }
 }
