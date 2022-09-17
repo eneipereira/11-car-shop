@@ -29,4 +29,16 @@ export default class MotorcycleService {
 
     return motorcycle;
   }
+
+  public async update(_id: string, payload: unknown): Promise<IMotorcycle> {
+    const parsed = Motorcycle.safeParse(payload);
+
+    if (!parsed.success) throw parsed.error;
+
+    const updatedMotorcycle = await this._model.update(_id, { ...parsed.data });
+
+    if (!updatedMotorcycle) throw new NotFoundError();
+
+    return updatedMotorcycle;
+  }
 }
